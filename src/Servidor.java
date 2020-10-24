@@ -23,20 +23,21 @@ public class Servidor {
     public static void main(String[] args) {
  
         final int PUERTO = 5000;
-        byte[] buffer = new byte[16384];
+        byte[] buffer = new byte[1024];
         usuarios=0;
         archivo= (int) Math.floor(Math.random()*2+1);
         numero=(int) Math.floor(Math.random()*25+1);
         try {
             System.out.println("Iniciado el servidor UDP");
             crearLog();
-            crearArchivoAenviar();
             //Siempre atendera peticiones
             while (usuarios<26) {
-            	//limpiar en buffer
-            	buffer = new byte[16384];
             	//Creacion del socket
                 DatagramSocket socketUDP = new DatagramSocket(PUERTO);
+            	//limpiar en buffer
+            	buffer = new byte[1024];
+            	int c=buffer.length;
+            	 System.out.println(c);
                 //Preparo la respuesta
                 DatagramPacket peticionC = new DatagramPacket(buffer, buffer.length);
                  
@@ -49,23 +50,21 @@ public class Servidor {
                 //Convierto lo recibido y mostrar el mensaje
                 String nombreDelCliente = new String(peticionC.getData());
                 System.out.println("Cliente: "+nombreDelCliente);
- 
                 //Obtengo el puerto y la direccion de origen
-                //Sino se quiere responder, no es necesario
                 int puertoCliente = peticionC.getPort();
                 InetAddress direccion = peticionC.getAddress();
- 
+                //Enviar Archivo
                 String mensaje = "¡Hola mundo desde el servidor!";
                 buffer = mensaje.getBytes();
- 
+                System.out.println(c);
                 //creo el datagrama
                 DatagramPacket respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
- 
+                
                 //Envio la información
                 System.out.println("Envio la informacion del cliente");
+                System.out.println(respuesta.getData());
                 socketUDP.send(respuesta);
-                peticionC=null;
-                respuesta=null;
+                System.out.println("3"+c);
                 long tiempoFinal = System.currentTimeMillis();
                 cambiarLog(nombreDelCliente,tiempoInicial,tiempoFinal);
                 usuarios--;
@@ -101,7 +100,7 @@ public class Servidor {
 		
 	}
 
-	private static void crearArchivoAenviar() throws IOException {
+	private static void EnviarArchivo() throws IOException {
 		String ruta="";
 		if(archivo<2)
 		{

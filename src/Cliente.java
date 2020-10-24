@@ -23,8 +23,7 @@ public class Cliente {
             //Creo el socket de UDP
             DatagramSocket socketUDP = new DatagramSocket();
             int id=(int) Math.floor(Math.random()*200+1);
- 
-            String mensaje = ""+id;
+            String mensaje = " "+id;
  
             //Convierto el mensaje a bytes
             buffer = mensaje.getBytes();
@@ -33,16 +32,16 @@ public class Cliente {
             DatagramPacket pregunta = new DatagramPacket(buffer, buffer.length, direccionServidor, PUERTO_SERVIDOR);
  
             //Lo envio con send
-            System.out.println("Cliente numero: " + id);
-            System.out.println("Envio peticion");
+            System.out.println("Envio el datagrama");
             socketUDP.send(pregunta);
  
             //Preparo la respuesta
+            buffer = new byte[1024];
             DatagramPacket peticion = new DatagramPacket(buffer, buffer.length);
  
             //Recibo la respuesta
             socketUDP.receive(peticion);
-            System.out.println("Recibo archivo");
+            System.out.println("Recibo la peticion");
  
             //Cojo los datos y lo muestro
             mensaje = new String(peticion.getData());
