@@ -47,7 +47,7 @@ public class Cliente {
             socketUDP.send(pregunta);
  
             //Preparo la respuesta
-            buffer = new byte[1024];
+            buffer = new byte[50000];
             DatagramPacket peticion = new DatagramPacket(buffer, buffer.length);
  
             //Recibo la respuesta
@@ -71,7 +71,6 @@ public class Cliente {
 		            	 buffer = mensaje.getBytes();
 		                 pregunta = new DatagramPacket(buffer, buffer.length, direccionServidor, PUERTO_SERVIDOR);
 		                 socketUDP.send(pregunta);
-		                 System.out.println("revi");
 		                 buffer = new byte[1024];
 		                 peticion = new DatagramPacket(buffer, buffer.length);
 		            	 socketUDP.receive(peticion);

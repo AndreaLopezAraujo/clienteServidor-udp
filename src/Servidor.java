@@ -24,7 +24,7 @@ public class Servidor {
 	static int archivo;
 	static int usuarios;
 	static String rutaLog;
-	static String FILE100 = "./data/100MiB.txt";
+	static String FILE100 = "./data/hola.txt";
 	static String FILE250 = "./data/250MiB1.txt";
  
     public static void main(String[] args) {
@@ -75,10 +75,10 @@ public class Servidor {
                 File ar = new File (decirArchivo());
                 FileReader fr = new FileReader (ar);
                 BufferedReader br = new BufferedReader(fr);
-                String linea;
+                String linea=br.readLine();
                 buffer = new byte[50000];
                 mensaje="";
-                while((linea=br.readLine())!=null)
+                while(linea!=null)
                 {
                 	byte[] k  = mensaje.getBytes();
                 	boolean x=false;
@@ -91,6 +91,15 @@ public class Servidor {
                 		x=true;
                 	}
                 	if(x)
+                	{
+                		buffer = mensaje.getBytes();
+                        respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
+                        socketUDP.send(respuesta);
+                        socketUDP.receive(peticionC);
+                        mensaje="";
+                	}
+                	linea=br.readLine();
+                	if(linea==null&&!(mensaje.equals("")))
                 	{
                 		buffer = mensaje.getBytes();
                         respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
