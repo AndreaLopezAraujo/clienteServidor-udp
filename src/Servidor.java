@@ -76,19 +76,31 @@ public class Servidor {
                 FileReader fr = new FileReader (ar);
                 BufferedReader br = new BufferedReader(fr);
                 String linea;
+                buffer = new byte[50000];
+                mensaje="";
                 while((linea=br.readLine())!=null)
                 {
-                	System.out.println("linea");
-                	mensaje = linea;
-                    buffer = mensaje.getBytes();
-                    respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
-                    socketUDP.send(respuesta);
-                    System.out.println("mensaje enviado");
-                    socketUDP.receive(peticionC);
-                    System.out.println("mensaje recibido");
-                    
+                	byte[] k  = mensaje.getBytes();
+                	boolean x=false;
+                	if(k.length<50000)
+                	{
+                		mensaje +=linea;
+                	}
+                	else
+                	{
+                		x=true;
+                	}
+                	if(x)
+                	{
+                		buffer = mensaje.getBytes();
+                        respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
+                        socketUDP.send(respuesta);
+                        socketUDP.receive(peticionC);
+                        mensaje="";
+                	}
                 }
                 fr.close();
+                buffer = new byte[1024];
                 mensaje = "Fin";
                 buffer = mensaje.getBytes();
                 respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
