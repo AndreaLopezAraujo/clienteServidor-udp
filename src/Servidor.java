@@ -1,5 +1,7 @@
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -62,18 +64,41 @@ public class Servidor {
                 InetAddress direccion = peticionC.getAddress();
                 //Enviar Archivo
                 String mensaje = "¡Hola mundo desde el servidor!";
-                //hash del archivo
-                String h = EnviarArchivo();
                 buffer = mensaje.getBytes();
                 //creo el datagrama
                 DatagramPacket respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
                 
                 //Envio la información
                 System.out.println("Envio la informacion del cliente");
+                
+                //Se lee el archivo a enviar
+                File ar = new File (decirArchivo());
+                FileReader fr = new FileReader (ar);
+                BufferedReader br = new BufferedReader(fr);
+                String linea;
+                while((linea=br.readLine())!=null)
+                {
+                	System.out.println("linea");
+                	mensaje = linea;
+                    buffer = mensaje.getBytes();
+                    respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
+                    socketUDP.send(respuesta);
+                    System.out.println("mensaje enviado");
+                    socketUDP.receive(peticionC);
+                    System.out.println("mensaje recibido");
+                    
+                }
+                fr.close();
+                mensaje = "Fin";
+                buffer = mensaje.getBytes();
+                respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
                 socketUDP.send(respuesta);
+                long tiempoFinal = System.currentTimeMillis();
+                //hash del archivo
                 socketUDP.receive(peticionC);
                 mensaje=new String(peticionC.getData());
-                long tiempoFinal = System.currentTimeMillis();
+                String h = EnviarArchivo();
+                //Agrego los datos al log
                 cambiarLog(nombreDelCliente,tiempoInicial,tiempoFinal,h,mensaje);
                 usuarios--;
                 numero--;
