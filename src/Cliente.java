@@ -54,7 +54,7 @@ public class Cliente {
             socketUDP.receive(peticion);
             mensaje = new String(peticion.getData());
             String ms=mensaje.replace(" ","");
-            System.out.println("Numero de paquetes: "+ms+"/");
+            System.out.println("Numero de paquetes: "+ms);
             double n=Double.parseDouble(ms);
             
             //Preparo la respuesta
