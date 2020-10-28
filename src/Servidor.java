@@ -1,3 +1,4 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +25,7 @@ public class Servidor {
 	static int archivo;
 	static int usuarios;
 	static String rutaLog;
-	static String FILE100 = "./data/hola.txt";
+	static String FILE100 = "./data/100MiB.txt";
 	static String FILE250 = "./data/250MiB1.txt";
  
     public static void main(String[] args) {
@@ -63,16 +64,50 @@ public class Servidor {
                 int puertoCliente = peticionC.getPort();
                 InetAddress direccion = peticionC.getAddress();
                 //Enviar Archivo
-                String mensaje = "¡Hola mundo desde el servidor!";
-                buffer = mensaje.getBytes();
+                String mensaje = "";
                 //creo el datagrama
-                DatagramPacket respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
                 
                 //Envio la información
                 System.out.println("Envio la informacion del cliente");
                 
                 //Se lee el archivo a enviar
-                File ar = new File (decirArchivo());
+                File f=new File(decirArchivo());
+                FileReader fr = new FileReader(decirArchivo());
+                FileInputStream ff=new FileInputStream(decirArchivo());
+                
+                BufferedInputStream bis=new BufferedInputStream(ff);
+            
+                int size=50000;
+                int p1=0;
+                if(archivo<2)
+                {
+                	p1=102400000;
+                }
+                else
+                {
+                	p1=256000000;
+                }
+                double paquetes=Math.ceil(((int)p1)/size);
+                System.out.println("Paquetes a enviar:"+paquetes);
+                mensaje = ""+paquetes;
+                buffer = new byte[1024];
+                buffer = mensaje.getBytes();
+                DatagramPacket respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
+                socketUDP.send(respuesta);
+                for(double i=0;i<=paquetes;i++)
+                {
+                	byte[] b =new byte[size];
+                	bis.read(b,0,b.length);
+                	System.out.println("Packet: "+(i+1));
+                	respuesta = new DatagramPacket(b, b.length, direccion, puertoCliente);
+                	socketUDP.send(respuesta);
+                	Thread.sleep(10L);
+                }
+                ff.close();
+                System.out.println("Archivo enviado");
+                long tiempoFinal = System.currentTimeMillis();
+                 
+                /**File ar = new File (decirArchivo());
                 FileReader fr = new FileReader (ar);
                 BufferedReader br = new BufferedReader(fr);
                 String linea=br.readLine();
@@ -108,13 +143,8 @@ public class Servidor {
                         mensaje="";
                 	}
                 }
-                fr.close();
+                fr.close();*/
                 buffer = new byte[1024];
-                mensaje = "Fin";
-                buffer = mensaje.getBytes();
-                respuesta = new DatagramPacket(buffer, buffer.length, direccion, puertoCliente);
-                socketUDP.send(respuesta);
-                long tiempoFinal = System.currentTimeMillis();
                 //hash del archivo
                 socketUDP.receive(peticionC);
                 mensaje=new String(peticionC.getData());
@@ -184,7 +214,7 @@ public class Servidor {
 	}
 
 	private static String decirArchivo() {
-		if(archivo<2)
+		if(archivo<=2)
 		{
 			return FILE100;
 		}

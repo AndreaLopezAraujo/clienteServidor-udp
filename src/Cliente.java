@@ -1,7 +1,10 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -45,17 +48,41 @@ public class Cliente {
             //Lo envio con send
             System.out.println("Envio el datagrama");
             socketUDP.send(pregunta);
- 
-            //Preparo la respuesta
-            buffer = new byte[50000];
+            //Numero de paquetes
+            buffer = new byte[6];
             DatagramPacket peticion = new DatagramPacket(buffer, buffer.length);
+            socketUDP.receive(peticion);
+            mensaje = new String(peticion.getData());
+            String ms=mensaje.replace(" ","");
+            System.out.println("Numero de paquetes: "+ms+"/");
+            double n=Double.parseDouble(ms);
+            
+            //Preparo la respuesta
+            buffer = new byte[100000];
+            
  
             //Recibo la respuesta
             socketUDP.receive(peticion);
-            System.out.println("Recibo la peticion");
+            mensaje = new String(peticion.getData());
+            System.out.println("Recibo el archivo");
+            crearArchivo();
+            int i=0;
+            BufferedWriter wr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(rutaLog)));
+            while(i<n)
+            {
+
+            		wr.write(mensaje);
+            		socketUDP.receive(peticion);
+                    mensaje = new String(peticion.getData());
+                    System.out.println("Packet: "+(i+1));
+                    i++;
+            }
+            wr.close();
+            System.out.println("Archivo recivido.\n");
+            
  
             //Cojo los datos y lo muestro
-            mensaje = new String(peticion.getData());
+            /**mensaje = new String(peticion.getData());
             crearArchivo();
             boolean c=false;
             while(!c)
@@ -76,7 +103,7 @@ public class Cliente {
 		            	 socketUDP.receive(peticion);
 		            	 mensaje = new String(peticion.getData());
             	 }
-            }
+            }*/
             //codigo hash
             mensaje=calcMD5(rutaLog);
             buffer = mensaje.getBytes();
