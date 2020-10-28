@@ -126,15 +126,6 @@ public class Cliente {
 		}
  
     }
-    private static void modificarArchivo(String mensaje) throws IOException {
-    	
-    	File log = null;
-		log = new File(rutaLog);
-		FileWriter fw =  new FileWriter(log.getAbsoluteFile(), true);
-		PrintWriter pw = new PrintWriter(fw);
-		pw.println(mensaje);
-		fw.close();
-	}
 	private static void crearArchivo() throws IOException {
     	File log = null;
 		rutaLog = "./data/archivoRecivido_Cliente"+id+ ".txt";

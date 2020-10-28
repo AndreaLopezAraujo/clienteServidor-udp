@@ -1,8 +1,6 @@
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,8 +69,6 @@ public class Servidor {
                 System.out.println("Envio la informacion del cliente");
                 
                 //Se lee el archivo a enviar
-                File f=new File(decirArchivo());
-                FileReader fr = new FileReader(decirArchivo());
                 FileInputStream ff=new FileInputStream(decirArchivo());
                 
                 BufferedInputStream bis=new BufferedInputStream(ff);
@@ -150,7 +146,7 @@ public class Servidor {
                 mensaje=new String(peticionC.getData());
                 String h = EnviarArchivo();
                 //Agrego los datos al log
-                cambiarLog(nombreDelCliente,tiempoInicial,tiempoFinal,h,mensaje);
+                cambiarLog(nombreDelCliente,tiempoInicial,tiempoFinal,h,mensaje,paquetes);
                 usuarios--;
                 numero--;
                 
@@ -178,7 +174,7 @@ public class Servidor {
  
     }
 
-	private static void cambiarLog(String cl,long in,long fin,String h1,String h2) throws IOException {
+	private static void cambiarLog(String cl,long in,long fin,String h1,String h2, double paquetes) throws IOException {
 		File log = null;
 		log = new File(rutaLog);
 		FileWriter fw =  new FileWriter(log.getAbsoluteFile(), true);
@@ -195,6 +191,7 @@ public class Servidor {
 		}
 		
 		pw.println("Tiempo de transferencia desde el servidor: "+(fin-in)+"ms");
+		pw.println("Numero de paquetes enviados: "+paquetes);
 		if(h1.equals(h2))
 		{
 			pw.println("El mensaje se recibio corectamente.");
@@ -208,8 +205,6 @@ public class Servidor {
 
 	private static String EnviarArchivo() throws Exception {
 		String ruta=decirArchivo();
-		File file;
-		file = new File(ruta);
 		return calcMD5(ruta);
 	}
 
